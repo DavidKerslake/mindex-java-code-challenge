@@ -1,6 +1,7 @@
 package com.mindex.challenge.controller;
 
 import com.mindex.challenge.data.Employee;
+import com.mindex.challenge.data.ReportingStructure;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class EmployeeController {
 
     @GetMapping("/employee/{id}")
     public Employee read(@PathVariable String id) {
-        LOG.debug("Received employee create request for id [{}]", id);
+        LOG.debug("Received employee read request for id [{}]", id);
 
         return employeeService.read(id);
     }
@@ -34,5 +35,13 @@ public class EmployeeController {
 
         employee.setEmployeeId(id);
         return employeeService.update(employee);
+    }
+
+    // Including reporting structure in EmployeeController (vs. new controller) as ReportingStructure is sub-category of Employee
+    @GetMapping("/employee/reportingstructure/{id}")
+    public ReportingStructure readReportingStructure(@PathVariable String id) {
+        LOG.debug("Received employee reporting structure read request for id [{}]", id);
+
+        return employeeService.createReportingStructure(id);
     }
 }

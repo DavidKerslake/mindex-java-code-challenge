@@ -2,12 +2,17 @@ package com.mindex.challenge.service.impl;
 
 import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.data.Employee;
+import com.mindex.challenge.data.ReportingStructure;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -29,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee read(String id) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Reading employee with id [{}]", id);
 
         Employee employee = employeeRepository.findByEmployeeId(id);
 
@@ -45,5 +50,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         LOG.debug("Updating employee [{}]", employee);
 
         return employeeRepository.save(employee);
+    }
+
+    @Override
+    public ReportingStructure createReportingStructure(String id) {
+        LOG.debug("Creating employee reporting structure with id [{}]", id);
+
+        Employee employee = this.read(id);
+        buildEmployeeWithDirectReports(employee);
+
+        return new ReportingStructure(employee);
+    }
+
+    // Recursive function to build employee chain of command
+    @Override
+    public void buildEmployeeWithDirectReports(Employee employee) {
+        List<Employee> currentDirectReports = employee.getDirectReports();
+        
+        if (currentDirectReports != null) {
+            List<Employee> updatedDirectReports = new ArrayList<>();
+            currentDirectReports.forEach(directReport -> {
+                Employee directReportRead = this.read(directReport.getEmployeeId());
+                buildEmployeeWithDirectReports(directReportRead);
+                updatedDirectReports.add(directReportRead);
+            });
+            employee.setDirectReports(updatedDirectReports);
+        }
     }
 }

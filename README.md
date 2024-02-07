@@ -18,7 +18,7 @@ The following endpoints are available to use:
     * RESPONSE: Employee
 * READ
     * HTTP Method: GET 
-    * URL: localhost:8080/employee/{id}
+    * URL: localhost:8080/employee/16a596ae-edd3-4847-99fe-c4518e82c86f
     * RESPONSE: Employee
 * UPDATE
     * HTTP Method: PUT 
