@@ -20,7 +20,6 @@ public class ReportingStructure {
     public void setEmployee(Employee employee) {
         this.employee = employee;
         this.calculateNumberOfReports();
-
     }
 
     public int getNumberOfReports() {
