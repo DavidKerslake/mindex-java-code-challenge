@@ -37,7 +37,7 @@ public class EmployeeController {
         return employeeService.update(employee);
     }
 
-    // Including reporting structure in EmployeeController (vs. new controller) as ReportingStructure is sub-category of Employee
+    // Including reporting structure in EmployeeController (vs. new controller) as ReportingStructure is sub-category of Employee and not persisted
     @GetMapping("/employee/reportingstructure/{id}")
     public ReportingStructure readReportingStructure(@PathVariable String id) {
         LOG.debug("Received employee reporting structure read request for id [{}]", id);

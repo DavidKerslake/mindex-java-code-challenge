@@ -25,7 +25,6 @@ public class CompensationServiceImplTest {
 
     private String compensationUrl;
     private String compensationIdUrl;
-    private String employeeUrl;
     private String employeeIdUrl;
 
     @Autowired
@@ -44,7 +43,6 @@ public class CompensationServiceImplTest {
     public void setup() {
         compensationUrl = "http://localhost:" + port + "/compensation";
         compensationIdUrl = "http://localhost:" + port + "/compensation/{id}";
-        employeeUrl = "http://localhost:" + port + "/employee";
         employeeIdUrl = "http://localhost:" + port + "/employee/{id}";
     }
 

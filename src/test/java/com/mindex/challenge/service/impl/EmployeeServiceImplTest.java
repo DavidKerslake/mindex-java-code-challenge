@@ -93,46 +93,55 @@ public class EmployeeServiceImplTest {
         Employee testEmployee021 = new Employee();
         Employee testEmployee022 = new Employee();
 
+        // Matching seeded data
         testEmployee0.setFirstName("John");
         testEmployee0.setLastName("Lennon");
         testEmployee0.setDepartment("Engineering");
         testEmployee0.setPosition("Development Manager");
         testEmployee0.setEmployeeId("16a596ae-edd3-4847-99fe-c4518e82c86f");
+
         testEmployee01.setFirstName("Paul");
         testEmployee01.setLastName("McCartney");
         testEmployee01.setDepartment("Engineering");
         testEmployee01.setPosition("Developer I");
         testEmployee01.setEmployeeId("b7839309-3348-463b-a7e3-5de1c168beb3");
+
         testEmployee02.setFirstName("Ringo");
         testEmployee02.setLastName("Starr");
         testEmployee02.setDepartment("Engineering");
         testEmployee02.setPosition("Developer V");
         testEmployee02.setEmployeeId("03aa1462-ffa9-4978-901b-7c001562cf6f");
+
         testEmployee021.setFirstName("Pete");
         testEmployee021.setLastName("Best");
         testEmployee021.setDepartment("Engineering");
         testEmployee021.setPosition("Developer II");
         testEmployee021.setEmployeeId("62c1084e-6e34-4630-93fd-9153afb65309");
+
         testEmployee022.setFirstName("George");
         testEmployee022.setLastName("Harrison");
         testEmployee022.setDepartment("Engineering");
         testEmployee022.setPosition("Developer III");
         testEmployee022.setEmployeeId("c0c2293d-16bd-4603-8e08-638a9d18b22c");
 
-        List<Employee> testEmployee02DirectReports = new ArrayList<>();
-        testEmployee02DirectReports.add(testEmployee021);
-        testEmployee02DirectReports.add(testEmployee022);
-        testEmployee02.setDirectReports(testEmployee02DirectReports);
-
         List<Employee> testEmployee0DirectReports = new ArrayList<>();
         testEmployee0DirectReports.add(testEmployee01);
         testEmployee0DirectReports.add(testEmployee02);
         testEmployee0.setDirectReports(testEmployee0DirectReports);
 
-        ReportingStructure testEmployee0ReportingStructure = new ReportingStructure(testEmployee0);
+        List<Employee> testEmployee02DirectReports = new ArrayList<>();
+        testEmployee02DirectReports.add(testEmployee021);
+        testEmployee02DirectReports.add(testEmployee022);
+        testEmployee02.setDirectReports(testEmployee02DirectReports);
+
+        ReportingStructure testEmployee0ReportingStructure = new ReportingStructure();
+        testEmployee0ReportingStructure.setEmployee(testEmployee0);
         ReportingStructure createdTestEmployee0ReportingStructure = restTemplate.getForEntity(employeeIdReportingStructureUrl, ReportingStructure.class, testEmployee0.getEmployeeId()).getBody();
 
-        assertReportingStructureEquivalence(testEmployee0ReportingStructure, createdTestEmployee0ReportingStructure);
+        assertEquals(4, testEmployee0ReportingStructure.getNumberOfReports());
+
+        // Recursive comparing of direct reports
+        assertReportingStructureEquivalence(testEmployee0ReportingStructure.getEmployee(), createdTestEmployee0ReportingStructure.getEmployee());
 
     }
 
@@ -143,18 +152,17 @@ public class EmployeeServiceImplTest {
         assertEquals(expected.getPosition(), actual.getPosition());
     }
 
-    private static void assertReportingStructureEquivalence(ReportingStructure expected, ReportingStructure actual) {
-        assertEmployeeEquivalence(expected.getEmployee(), actual.getEmployee());
-        if (expected.getEmployee().getDirectReports() == null) {
-            assertNull(actual.getEmployee().getDirectReports());
+    private static void assertReportingStructureEquivalence(Employee expected, Employee actual) {
+        assertEmployeeEquivalence(expected, actual);
+        if (expected.getDirectReports() == null) {
+            assertNull(actual.getDirectReports());
         } else {
-            assertEquals(expected.getNumberOfReports(), actual.getNumberOfReports());
-            assertEquals(expected.getEmployee().getDirectReports().size(), actual.getEmployee().getDirectReports().size());
-            expected.getEmployee().getDirectReports().sort(Comparator.comparing(Employee::getEmployeeId));
-            actual.getEmployee().getDirectReports().sort(Comparator.comparing(Employee::getEmployeeId));
+            assertEquals(expected.getDirectReports().size(), actual.getDirectReports().size());
+            expected.getDirectReports().sort(Comparator.comparing(Employee::getEmployeeId));
+            actual.getDirectReports().sort(Comparator.comparing(Employee::getEmployeeId));
 
-            for (int i = 0; i < expected.getEmployee().getDirectReports().size(); i++) {
-                assertReportingStructureEquivalence(new ReportingStructure(expected.getEmployee().getDirectReports().get(i)), new ReportingStructure(actual.getEmployee().getDirectReports().get(i)));
+            for (int i = 0; i < expected.getDirectReports().size(); i++) {
+                assertReportingStructureEquivalence(expected.getDirectReports().get(i), actual.getDirectReports().get(i));
             }
         }
     }

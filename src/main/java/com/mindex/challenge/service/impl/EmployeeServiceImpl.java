@@ -58,8 +58,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = this.read(id);
         buildEmployeeWithDirectReports(employee);
+        ReportingStructure reportingStructure = new ReportingStructure();
+        reportingStructure.setEmployee(employee);
 
-        return new ReportingStructure(employee);
+        return reportingStructure;
     }
 
     // Recursive function to build employee chain of command
